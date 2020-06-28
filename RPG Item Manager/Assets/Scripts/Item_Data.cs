@@ -9,7 +9,7 @@ public class Item_Data
     public string ItemName;
     public string DescriptionItem;
 
-    int TypeItem;
+    public int TypeItem;
 
     //ammo type item Parameter
     public int ammoCount = 0;

@@ -24,7 +24,7 @@ public class Save_Data : MonoBehaviour
 
                 //O c é a barra apropriada do SO
                 c = Directory.GetDirectoryRoot(Directory.GetCurrentDirectory())[Directory.GetDirectoryRoot(Directory.GetCurrentDirectory()).Length - 1];
-                print(c);
+                //print(c);
                 AllData = LoadAll();
             }
             else
