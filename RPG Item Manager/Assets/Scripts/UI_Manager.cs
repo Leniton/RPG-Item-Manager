@@ -10,6 +10,11 @@ public class UI_Manager : MonoBehaviour
     [SerializeField] GameObject FirstItem;
     List<GameObject> Items = new List<GameObject>();
 
+    [Space]
+
+    [SerializeField] GameObject CreationMenu;
+    [SerializeField] Item_Data Item = new Item_Data("nOname","");
+
     /*Child ID guide:
      0 - Backrgound
      1 - Item Name
@@ -17,6 +22,14 @@ public class UI_Manager : MonoBehaviour
      3 - Add ammo
      4 - Remove ammo
      5 - Description Buttom*/
+
+    /*creation child guide:
+     3 - Nome
+     6 - tipo
+     7 - ammo
+     8 - max
+     9 - desc
+     10 - barra*/
 
     void Start()
     {
@@ -34,7 +47,7 @@ public class UI_Manager : MonoBehaviour
             Items[i].transform.position = Items[i - 1].transform.position + (Vector3.down * (FirstItem.GetComponent<RectTransform>().rect.height * 1.1f));
             PlaceItemValues(Items[i]);
         }
-        print(FirstItem.GetComponent<RectTransform>().rect.height);
+        
         if(FirstItem.transform.parent.parent.GetComponent<RectTransform>().rect.height < (FirstItem.transform.GetComponent<RectTransform>().rect.height * Items.Count) * 1.1f)
         {
             print((FirstItem.transform.GetComponent<RectTransform>().rect.height * Items.Count) * 1.1f);
@@ -125,4 +138,66 @@ public class UI_Manager : MonoBehaviour
 
         PlaceItemValues(item);
     }
+
+    public void AdaptPerType(int type)
+    {
+        Item.TypeItem = type;
+        switch (type)
+        {
+            case 0:
+                CreationMenu.transform.GetChild(7).gameObject.SetActive(false);
+                CreationMenu.transform.GetChild(8).gameObject.SetActive(false);
+                CreationMenu.transform.GetChild(10).gameObject.SetActive(false);
+
+                CreationMenu.transform.GetChild(9).GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().text = "Default type of item, write description...";
+                break;
+            case 1:
+                CreationMenu.transform.GetChild(7).gameObject.SetActive(true);
+                CreationMenu.transform.GetChild(8).gameObject.SetActive(false);
+                CreationMenu.transform.GetChild(10).gameObject.SetActive(false);
+
+                CreationMenu.transform.GetChild(9).GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().text = "Ammo type of item, write description...";
+                break;
+            case 2:
+                CreationMenu.transform.GetChild(7).gameObject.SetActive(true);
+                CreationMenu.transform.GetChild(8).gameObject.SetActive(true);
+                CreationMenu.transform.GetChild(10).gameObject.SetActive(true);
+
+                CreationMenu.transform.GetChild(9).GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().text = "Limited charges type of item, write description...";
+                break;
+        }
+    }
+
+    public void ItemName(string n)
+    {
+        Item.ItemName = n;
+    }
+    public void ItemDesctription(string d)
+    {
+        Item.DescriptionItem = d;
+    }
+    public void ItemAmmo(string a)
+    {
+        if(a == "")
+        {
+            Item.ammoCount = 0;
+        }
+        else
+        {
+            Item.ammoCount = int.Parse(a);
+        }
+    }
+    public void ItemMaxAmmo(string m)
+    {
+        if (m == "")
+        {
+            Item.MaxCount = 0;
+        }
+        else
+        {
+            Item.MaxCount = int.Parse(m);
+        }
+    }
+
+
 }
