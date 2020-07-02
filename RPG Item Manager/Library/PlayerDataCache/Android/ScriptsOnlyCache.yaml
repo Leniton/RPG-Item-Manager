@@ -14,7 +14,9 @@ ScriptsOnlyBuild:
     Unity.Rider.Editor.dll:
     - Packages.Rider.Editor.UnitTesting.CallbackData
     Unity.TextMeshPro.dll:
+    - TMPro.TMP_Dropdown
     - TMPro.TMP_FontAsset
+    - TMPro.TMP_InputField
     - TMPro.TMP_Settings
     - TMPro.TMP_SpriteAsset
     - TMPro.TMP_StyleSheet
@@ -38,8 +40,10 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.Image
     - UnityEngine.UI.Mask
     - UnityEngine.UI.RawImage
+    - UnityEngine.UI.RectMask2D
     - UnityEngine.UI.ScrollRect
     - UnityEngine.UI.Scrollbar
+    - UnityEngine.UI.Toggle
   sceneClasses:
     Assets/Scenes/SampleScene.unity:
     - Class: 1
@@ -65,9 +69,15 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11192}
     - Class: 114
+      Script: {instanceID: 11262}
+    - Class: 114
       Script: {instanceID: 11484}
     - Class: 114
       Script: {instanceID: 11534}
+    - Class: 114
+      Script: {instanceID: 11584}
+    - Class: 114
+      Script: {instanceID: 11862}
     - Class: 114
       Script: {instanceID: 12022}
     - Class: 114
@@ -96,6 +106,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 14100}
     - Class: 114
       Script: {instanceID: 14266}
+    - Class: 114
+      Script: {instanceID: 14286}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -403,7 +415,7 @@ ScriptsOnlyBuild:
     className: RawImage
   - hash:
       serializedVersion: 2
-      Hash: 28de2316c8fdc91ca959386bb2a468d4
+      Hash: db46d0e34885b62f165775676f35785d
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Save_Data
@@ -523,7 +535,7 @@ ScriptsOnlyBuild:
     className: TMP_ColorGradient
   - hash:
       serializedVersion: 2
-      Hash: ee98729079998eb63435f99f41b30b9e
+      Hash: a014a5e2a0000c96571d4c72039ab971
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: UI_Manager

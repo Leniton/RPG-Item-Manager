@@ -97,4 +97,11 @@ public class Save_Data : MonoBehaviour
         }
     }
 
+    /*private void OnApplicationQuit()
+    {
+        for (int i = 0; i < AllData.Length; i++)
+        {
+            Save(AllData[i]);
+        }
+    }*/
 }

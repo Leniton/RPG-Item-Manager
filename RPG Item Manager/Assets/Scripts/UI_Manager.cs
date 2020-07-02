@@ -15,6 +15,11 @@ public class UI_Manager : MonoBehaviour
     [SerializeField] GameObject CreationMenu;
     [SerializeField] Item_Data Item = new Item_Data("nOname","");
 
+    [Space]
+
+    [SerializeField] GameObject Description;
+    int IDItem;
+
     /*Child ID guide:
      0 - Backrgound
      1 - Item Name
@@ -24,20 +29,23 @@ public class UI_Manager : MonoBehaviour
      5 - Description Buttom*/
 
     /*creation child guide:
-     3 - Nome
-     6 - tipo
-     7 - ammo
-     8 - max
-     9 - desc
-     10 - barra*/
+     1 - Nome
+     4 - tipo
+     5 - ammo
+     6 - max
+     7 - desc
+     8 - barra*/
 
     void Start()
     {
+        //Invoke("MakeItemList", 0.5f);
         MakeItemList();
     }
 
+    //functions to show the items
     public void MakeItemList()
     {
+        Items.Clear();
         Items.Add(FirstItem);
         PlaceItemValues(FirstItem);
         //174
@@ -50,21 +58,34 @@ public class UI_Manager : MonoBehaviour
         
         if(FirstItem.transform.parent.parent.GetComponent<RectTransform>().rect.height < (FirstItem.transform.GetComponent<RectTransform>().rect.height * Items.Count) * 1.1f)
         {
-            print((FirstItem.transform.GetComponent<RectTransform>().rect.height * Items.Count) * 1.1f);
-            print(FirstItem.transform.parent.parent.GetComponent<RectTransform>().rect.height);
+            //print((FirstItem.transform.GetComponent<RectTransform>().rect.height * Items.Count) * 1.1f);
+            //print(FirstItem.transform.parent.parent.GetComponent<RectTransform>().rect.height);
+            //print(FirstItem.transform.parent.parent.GetComponent<RectTransform>().offsetMin);
 
             float h = (FirstItem.transform.GetComponent<RectTransform>().rect.height * Items.Count) *1.1f;
 
-            FirstItem.transform.parent.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(FirstItem.transform.parent.parent.GetComponent<RectTransform>().rect.width, h);
+            FirstItem.transform.parent.parent.GetComponent<RectTransform>().offsetMin = new Vector2(0.0f, -h);
         }
     }
 
     void PlaceItemValues(GameObject item)
     {
+        if(Save_Data.DataSaver.AllData.Length == 0)
+        {
+            CreationMenu.SetActive(true);
+            return;
+        }
+
         item.name = Save_Data.DataSaver.AllData[Items.IndexOf(item)].ItemName;
         item.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = Save_Data.DataSaver.AllData[Items.IndexOf(item)].ItemName;
 
-        if (Save_Data.DataSaver.AllData[Items.IndexOf(item)].TypeItem == 1)
+        if(Save_Data.DataSaver.AllData[Items.IndexOf(item)].TypeItem == 0)
+        {
+            item.transform.GetChild(2).gameObject.SetActive(false);
+            item.transform.GetChild(3).gameObject.SetActive(false);
+            item.transform.GetChild(4).gameObject.SetActive(false);
+        }
+        else if (Save_Data.DataSaver.AllData[Items.IndexOf(item)].TypeItem == 1)
         {
             item.transform.GetChild(2).gameObject.SetActive(true);
             item.transform.GetChild(3).gameObject.SetActive(true);
@@ -107,6 +128,7 @@ public class UI_Manager : MonoBehaviour
         }
 
         PlaceItemValues(item);
+        Save_Data.DataSaver.Save(Save_Data.DataSaver.AllData[Items.IndexOf(item)]);
     }
 
     public void RemoveAmmo(GameObject item)
@@ -137,33 +159,35 @@ public class UI_Manager : MonoBehaviour
         }
 
         PlaceItemValues(item);
+        Save_Data.DataSaver.Save(Save_Data.DataSaver.AllData[Items.IndexOf(item)]);
     }
 
+    //functions to create a item
     public void AdaptPerType(int type)
     {
         Item.TypeItem = type;
         switch (type)
         {
             case 0:
-                CreationMenu.transform.GetChild(7).gameObject.SetActive(false);
+                CreationMenu.transform.GetChild(5).gameObject.SetActive(false);
+                CreationMenu.transform.GetChild(6).gameObject.SetActive(false);
                 CreationMenu.transform.GetChild(8).gameObject.SetActive(false);
-                CreationMenu.transform.GetChild(10).gameObject.SetActive(false);
 
-                CreationMenu.transform.GetChild(9).GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().text = "Default type of item, write description...";
+                CreationMenu.transform.GetChild(7).GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().text = "Default type of item, write description...";
                 break;
             case 1:
-                CreationMenu.transform.GetChild(7).gameObject.SetActive(true);
+                CreationMenu.transform.GetChild(5).gameObject.SetActive(true);
+                CreationMenu.transform.GetChild(6).gameObject.SetActive(false);
                 CreationMenu.transform.GetChild(8).gameObject.SetActive(false);
-                CreationMenu.transform.GetChild(10).gameObject.SetActive(false);
 
-                CreationMenu.transform.GetChild(9).GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().text = "Ammo type of item, write description...";
+                CreationMenu.transform.GetChild(7).GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().text = "Ammo type of item, write description...";
                 break;
             case 2:
-                CreationMenu.transform.GetChild(7).gameObject.SetActive(true);
+                CreationMenu.transform.GetChild(5).gameObject.SetActive(true);
+                CreationMenu.transform.GetChild(6).gameObject.SetActive(true);
                 CreationMenu.transform.GetChild(8).gameObject.SetActive(true);
-                CreationMenu.transform.GetChild(10).gameObject.SetActive(true);
 
-                CreationMenu.transform.GetChild(9).GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().text = "Limited charges type of item, write description...";
+                CreationMenu.transform.GetChild(7).GetComponent<TMP_InputField>().placeholder.GetComponent<TextMeshProUGUI>().text = "Limited charges type of item, write description...";
                 break;
         }
     }
@@ -199,5 +223,43 @@ public class UI_Manager : MonoBehaviour
         }
     }
 
+    public void CreateItem()
+    {
+        for (int i = 0; i < Save_Data.DataSaver.AllData.Length; i++)
+        {
+            if (Item.ItemName == Save_Data.DataSaver.AllData[i].ItemName)
+            {
+                print("item com esse nome já existe");
+                return;
+            }
+        }
 
+        Save_Data.DataSaver.Save(Item);
+        MakeItemList();
+        CreationMenu.SetActive(false);
+    }
+
+    public void CancelItem()
+    {
+        CreationMenu.SetActive(false);
+    }
+
+    public void ClearItemCreation()
+    {
+        print("clear");
+    }
+
+    //function to see and edit description of the item
+    public void OpenDescription(GameObject item)
+    {
+        IDItem = Items.IndexOf(item);
+        Description.GetComponent<TMP_InputField>().text = Save_Data.DataSaver.AllData[Items.IndexOf(item)].DescriptionItem;
+        Description.SetActive(true);
+    }
+
+    public void SaveDescription()
+    {
+        Save_Data.DataSaver.AllData[IDItem].DescriptionItem = Description.GetComponent<TMP_InputField>().text;
+        Save_Data.DataSaver.Save(Save_Data.DataSaver.AllData[IDItem]);
+    }
 }
