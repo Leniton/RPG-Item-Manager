@@ -24,7 +24,10 @@ public class Save_Data : MonoBehaviour
 
                 //O c é a barra apropriada do SO
                 c = Directory.GetDirectoryRoot(Directory.GetCurrentDirectory())[Directory.GetDirectoryRoot(Directory.GetCurrentDirectory()).Length - 1];
+                //c = '\\';
                 //print(c);
+                print(Directory.GetCurrentDirectory());
+                print(Application.persistentDataPath);
                 AllData = LoadAll();
             }
             else
@@ -38,11 +41,11 @@ public class Save_Data : MonoBehaviour
     {
         //BinaryFormatter formatter = new BinaryFormatter();
         DataContractJsonSerializer son = new DataContractJsonSerializer(typeof(Item_Data));
-        if (!Directory.Exists(Directory.GetCurrentDirectory() + c +"Game_data"))
+        if (!Directory.Exists(Application.persistentDataPath + c +"GameData"))
         {
-            Directory.CreateDirectory(Directory.GetCurrentDirectory() + c + "Game_data");
+            Directory.CreateDirectory(Application.persistentDataPath + c + "GameData");
         }
-        string caminho = Directory.GetCurrentDirectory() + c + "Game_data" + c + data.ItemName + ".json";
+        string caminho = Application.persistentDataPath + c + "GameData" + c + data.ItemName + ".json";
         print(caminho);
         FileStream file = new FileStream(caminho, FileMode.Create);
         //formatter.Serialize(file, data);
@@ -58,7 +61,7 @@ public class Save_Data : MonoBehaviour
     public Item_Data[] LoadAll()
     {
         List<Item_Data> itemDatas = new List<Item_Data>();
-        string caminho = Directory.GetCurrentDirectory() + c + "Game_data";
+        string caminho = Application.persistentDataPath + c + "GameData";
 
         if (!Directory.Exists(caminho))
         {
