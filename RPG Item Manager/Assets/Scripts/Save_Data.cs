@@ -8,7 +8,10 @@ using UnityEngine;
 
 public class Save_Data : MonoBehaviour
 {
+    Item_Data Placeholder = new Item_Data("No items found", "Once you have another item, this item dissapear");
+
     public Item_Data[] AllData;
+    string Caminho;
     public char c;
 
     public static Save_Data DataSaver;
@@ -22,13 +25,7 @@ public class Save_Data : MonoBehaviour
                 DataSaver = this;
                 DontDestroyOnLoad(this);
 
-                //O c é a barra apropriada do SO
-                c = Directory.GetDirectoryRoot(Directory.GetCurrentDirectory())[Directory.GetDirectoryRoot(Directory.GetCurrentDirectory()).Length - 1];
-                //c = '\\';
-                //print(c);
-                print(Directory.GetCurrentDirectory());
-                print(Application.persistentDataPath);
-                AllData = LoadAll();
+                PrepararCaminho();
             }
             else
             {
@@ -37,17 +34,53 @@ public class Save_Data : MonoBehaviour
         }
     }
 
+    void PrepararCaminho()
+    {
+        //O c é a barra apropriada do SO
+        c = Directory.GetDirectoryRoot(Directory.GetCurrentDirectory())[Directory.GetDirectoryRoot(Directory.GetCurrentDirectory()).Length - 1];
+        //c = '\\';
+        //print(c);
+        //print(Directory.GetCurrentDirectory());
+        //print(Application.persistentDataPath);
+        Caminho = Directory.GetCurrentDirectory() + "GameData";
+
+        for (int i = 0; i < Path.GetInvalidPathChars().Length; i++)
+        {
+            print(Path.GetInvalidPathChars()[i]);
+            if (Caminho.Contains(Path.GetInvalidPathChars()[i].ToString()))
+            {
+                Caminho = Caminho.Replace(Path.GetInvalidPathChars()[i].ToString(),"z");
+            }
+        }
+        print(Caminho);
+        try
+        {
+            Directory.CreateDirectory(Caminho);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            Debug.LogError("Sem acesso, mudando caminho..");
+
+            Caminho = Application.persistentDataPath + c + "GameData";
+            Directory.CreateDirectory(Caminho);
+
+            throw;
+        }
+
+        AllData = LoadAll();
+    }
+
     public void Save(Item_Data data)
     {
         //BinaryFormatter formatter = new BinaryFormatter();
         DataContractJsonSerializer son = new DataContractJsonSerializer(typeof(Item_Data));
-        if (!Directory.Exists(Application.persistentDataPath + c +"GameData"))
+        if (!Directory.Exists(Caminho))
         {
-            Directory.CreateDirectory(Application.persistentDataPath + c + "GameData");
+            Directory.CreateDirectory(Caminho);
         }
-        string caminho = Application.persistentDataPath + c + "GameData" + c + data.ItemName + ".json";
-        print(caminho);
-        FileStream file = new FileStream(caminho, FileMode.Create);
+        string caminhoDoArquivo = Caminho + c + data.ItemName + ".json";
+        print(caminhoDoArquivo);
+        FileStream file = new FileStream(caminhoDoArquivo, FileMode.Create);
         //formatter.Serialize(file, data);
         son.WriteObject(file, data);
         file.Close();
@@ -61,14 +94,19 @@ public class Save_Data : MonoBehaviour
     public Item_Data[] LoadAll()
     {
         List<Item_Data> itemDatas = new List<Item_Data>();
-        string caminho = Application.persistentDataPath + c + "GameData";
 
-        if (!Directory.Exists(caminho))
+        if (!Directory.Exists(Caminho))
         {
-            Directory.CreateDirectory(caminho);
+            Directory.CreateDirectory(Caminho);
         }
 
-        string[] files = Directory.GetFiles(caminho, "*.json");
+        string[] files = Directory.GetFiles(Caminho, "*.json");
+
+        if (files.Length == 0)
+        {
+            itemDatas.Add(Placeholder);
+            return itemDatas.ToArray();
+        }
 
         for (int i = 0; i < files.Length; i++)
         {
@@ -100,11 +138,16 @@ public class Save_Data : MonoBehaviour
         }
     }
 
-    /*private void OnApplicationQuit()
+    public void DeleteData(Item_Data data)
     {
-        for (int i = 0; i < AllData.Length; i++)
+        if (File.Exists(Caminho + c + data.ItemName + ".json"))
         {
-            Save(AllData[i]);
+            File.Delete(Caminho + c + data.ItemName + ".json");
+            AllData = LoadAll();
         }
-    }*/
+        else
+        {
+            print(Directory.GetFiles(Caminho, "*.json")[1]);
+        }
+    }
 }

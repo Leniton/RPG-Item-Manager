@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -39,12 +38,26 @@ public class UI_Manager : MonoBehaviour
     void Start()
     {
         //Invoke("MakeItemList", 0.5f);
+
+        if(Save_Data.DataSaver.AllData.Length == 0)
+        {
+            Save_Data.DataSaver.AllData = Save_Data.DataSaver.LoadAll();
+        }
+
         MakeItemList();
     }
 
     //functions to show the items
     public void MakeItemList()
     {
+        if(Items.Count > 0)
+        {
+            for (int i = 1; i < Items.Count; i++)
+            {
+                Destroy(Items[i]);
+            }
+        }
+
         Items.Clear();
         Items.Add(FirstItem);
         PlaceItemValues(FirstItem);
@@ -261,5 +274,31 @@ public class UI_Manager : MonoBehaviour
     {
         Save_Data.DataSaver.AllData[IDItem].DescriptionItem = Description.GetComponent<TMP_InputField>().text;
         Save_Data.DataSaver.Save(Save_Data.DataSaver.AllData[IDItem]);
+    }
+
+    //delete items functions
+    public void DeletionSelection(GameObject Container)
+    {
+        for (int i = 0; i < Container.transform.childCount; i++)
+        {
+            Container.transform.GetChild(i).GetComponent<Button>().enabled = true;
+            Container.transform.GetChild(i).GetComponent<Button>().targetGraphic.gameObject.SetActive(true);
+        }
+    }
+
+    public void CancelSelection(GameObject Container)
+    {
+        for (int i = 0; i < Container.transform.childCount; i++)
+        {
+            Container.transform.GetChild(i).GetComponent<Button>().enabled = false;
+            Container.transform.GetChild(i).GetComponent<Button>().targetGraphic.gameObject.SetActive(false);
+        }
+    }
+
+    public void DeleteItem(GameObject item)
+    {
+        Save_Data.DataSaver.DeleteData(Save_Data.DataSaver.AllData[Items.IndexOf(item)]);
+        Destroy(item);
+        MakeItemList();
     }
 }
